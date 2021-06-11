@@ -1,3 +1,4 @@
+import { StatusBar } from "expo-status-bar";
 import React, { Component } from "react";
 import {
   Text,
@@ -9,6 +10,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Icon } from "react-native-elements/dist/icons/Icon";
+import { RFValue } from "react-native-responsive-fontsize";
 import { windowWidth, windowHeight } from "../components/Dimen";
 
 export default class HomeScreen extends Component {
@@ -18,6 +20,8 @@ export default class HomeScreen extends Component {
         source={require("../assets/img/homebg.png")}
         style={styles.bg}
       >
+        <StatusBar style={{ backgroundColor: "#5007AE" }} />
+
         <View style={styles.container}>
           <View style={styles.head}>
             <View style={styles.head_text}>
@@ -267,8 +271,8 @@ export default class HomeScreen extends Component {
                   <Image
                     source={require("../assets/img/movies.png")}
                     style={{
-                      width: "100%",
-                      height: "100%",
+                      width: "110%",
+                      height: "110%",
                     }}
                   />
                 </View>
@@ -328,13 +332,11 @@ const styles = StyleSheet.create({
   head: {
     width: windowWidth,
     height: windowHeight / 6,
-    marginTop: 50,
+    marginTop: 20,
     padding: 20,
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: "gray",
   },
   head_text: {
     display: "flex",
@@ -342,12 +344,12 @@ const styles = StyleSheet.create({
   },
   hello: {
     color: "#000",
-    fontSize: 50,
+    fontSize: RFValue(40),
     fontWeight: "bold",
   },
   username: {
     color: "#fff",
-    fontSize: 45,
+    fontSize: RFValue(35),
     fontWeight: "bold",
     marginLeft: 20,
   },
@@ -358,14 +360,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 30,
+    marginTop: 10,
   },
   points_card_text: {
-    fontSize: 25,
+    fontSize: RFValue(20),
     fontWeight: "bold",
     color: "#510BAA",
   },
   points_card_point: {
-    fontSize: 20,
+    fontSize: RFValue(17),
     fontWeight: "bold",
     color: "#000",
   },
@@ -425,7 +428,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "white",
-    fontSize: 33,
+    fontSize: RFValue(27),
     fontWeight: "600",
   },
   titleCard: {
