@@ -12,6 +12,7 @@ import {
 import { Icon } from "react-native-elements/dist/icons/Icon";
 import { RFValue } from "react-native-responsive-fontsize";
 import { windowWidth, windowHeight } from "../components/Dimen";
+import axios from "axios";
 
 export default class HomeScreen extends Component {
   render() {
@@ -34,9 +35,7 @@ export default class HomeScreen extends Component {
             </View>
           </View>
 
-          <ScrollView style={{ marginBottom: 220 }}>
-            {/*  */}
-            {/*  */}
+          <ScrollView>
             <TouchableOpacity
               onPress={() => this.props.navigation.replace("Animals")}
             >
@@ -67,11 +66,6 @@ export default class HomeScreen extends Component {
                 </View>
               </View>
             </TouchableOpacity>
-
-            {/*  */}
-            {/*  */}
-            {/*  */}
-            {/*  */}
             <TouchableOpacity
               onPress={() => this.props.navigation.replace("Vehicles")}
             >
@@ -102,11 +96,6 @@ export default class HomeScreen extends Component {
                 </View>
               </View>
             </TouchableOpacity>
-
-            {/*  */}
-            {/*  */}
-            {/*  */}
-            {/*  */}
             <TouchableOpacity
               onPress={() => this.props.navigation.replace("Books")}
             >
@@ -137,11 +126,6 @@ export default class HomeScreen extends Component {
                 </View>
               </View>
             </TouchableOpacity>
-
-            {/*  */}
-            {/*  */}
-            {/*  */}
-            {/*  */}
             <TouchableOpacity
               onPress={() => this.props.navigation.replace("Comp")}
             >
@@ -172,11 +156,6 @@ export default class HomeScreen extends Component {
                 </View>
               </View>
             </TouchableOpacity>
-
-            {/*  */}
-            {/*  */}
-            {/*  */}
-            {/*  */}
             <TouchableOpacity
               onPress={() => this.props.navigation.replace("Geo")}
             >
@@ -207,11 +186,6 @@ export default class HomeScreen extends Component {
                 </View>
               </View>
             </TouchableOpacity>
-
-            {/*  */}
-            {/*  */}
-            {/*  */}
-            {/*  */}
             <TouchableOpacity
               onPress={() => this.props.navigation.replace("GK")}
             >
@@ -219,7 +193,9 @@ export default class HomeScreen extends Component {
                 <View style={styles.infoCard}>
                   <View style={styles.titleCard}>
                     <View style={{}}>
-                      <Text style={styles.title}>General Knowledge</Text>
+                      <Text style={[styles.title, { width: windowWidth / 2 }]}>
+                        General Knowledge
+                      </Text>
                       <View style={styles.blueStrike}></View>
                     </View>
                     <Icon
@@ -242,12 +218,6 @@ export default class HomeScreen extends Component {
                 </View>
               </View>
             </TouchableOpacity>
-
-            {/*  */}
-            {/*  */}
-            {/*  */}
-            {/*  */}
-            {/*  */}
             <TouchableOpacity
               onPress={() => this.props.navigation.replace("Movies")}
             >
@@ -278,12 +248,6 @@ export default class HomeScreen extends Component {
                 </View>
               </View>
             </TouchableOpacity>
-
-            {/*  */}
-            {/*  */}
-            {/*  */}
-            {/*  */}
-            {/*  */}
             <TouchableOpacity
               onPress={() => this.props.navigation.replace("Sports")}
             >
@@ -314,9 +278,6 @@ export default class HomeScreen extends Component {
                 </View>
               </View>
             </TouchableOpacity>
-
-            {/*  */}
-            {/*  */}
           </ScrollView>
         </View>
       </ImageBackground>
@@ -325,6 +286,10 @@ export default class HomeScreen extends Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    width: windowWidth,
+    height: windowHeight,
+  },
   bg: {
     height: windowHeight,
     width: windowWidth,
@@ -332,11 +297,12 @@ const styles = StyleSheet.create({
   head: {
     width: windowWidth,
     height: windowHeight / 6,
-    marginTop: 20,
-    padding: 20,
+    marginTop: 50,
+    marginBottom: 20,
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    alignItems: "center",
   },
   head_text: {
     display: "flex",
@@ -344,31 +310,31 @@ const styles = StyleSheet.create({
   },
   hello: {
     color: "#000",
-    fontSize: RFValue(40),
+    fontSize: RFValue(50),
     fontWeight: "bold",
   },
   username: {
     color: "#fff",
-    fontSize: RFValue(35),
+    fontSize: RFValue(40),
     fontWeight: "bold",
     marginLeft: 20,
   },
   points_card: {
     backgroundColor: "#F5FFFA",
-    width: windowWidth / 3.2,
+    width: windowWidth / 3,
     height: 80,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 30,
-    marginTop: 10,
+    marginBottom: 60,
   },
   points_card_text: {
-    fontSize: RFValue(20),
+    fontSize: RFValue(27),
     fontWeight: "bold",
     color: "#510BAA",
   },
   points_card_point: {
-    fontSize: RFValue(17),
+    fontSize: RFValue(25),
     fontWeight: "bold",
     color: "#000",
   },

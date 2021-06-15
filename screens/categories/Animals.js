@@ -11,56 +11,26 @@ import {
   Alert,
 } from "react-native";
 import { windowWidth, windowHeight } from "../../components/Dimen";
-import ConfettiCannon from "react-native-confetti-cannon";
 
 import { Icon } from "react-native-elements";
 import { RFValue } from "react-native-responsive-fontsize";
 import { StatusBar } from "expo-status-bar";
-import axios from "axios";
 
-export default class Animals extends Component {
+export default class Books extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      options: [],
-      dataSource: [],
-      showCon: false,
       isLoading: true,
-      disabled: false,
+      dataSource: [],
+      options: [],
       minutes: 2,
+      qNum: 0,
       seconds: 0,
-      score: 0,
-      currQues: 0,
-      selected: "",
+      choice: 0,
     };
   }
 
-  handleShuffle(optionss) {
-    return optionss.sort(() => Math.random() - 0.5);
-  }
-
-  async fetchAPI() {
-    const { data } = await axios.get(
-      "https://opentdb.com/api.php?amount=10&category=27&difficulty=easy&type=multiple"
-    );
-    this.setState({
-      isLoading: false,
-      dataSource: data.results,
-    });
-
-    this.setState({
-      options:
-        this.state.dataSource &&
-        this.handleShuffle([
-          this.state.dataSource[this.state.currQues]?.correct_answer,
-          ...this.state.dataSource[this.state.currQues]?.incorrect_answers,
-        ]),
-    });
-  }
-
   componentDidMount() {
-    this.fetchAPI();
-
     this.myInterval = setInterval(() => {
       const { seconds, minutes } = this.state;
       if (seconds > 0) {
@@ -79,31 +49,18 @@ export default class Animals extends Component {
         }
       }
     }, 1000);
-  }
 
-  checkAnswer(i) {
-    this.setState({
-      disabled: true,
-    });
-    console.log(i);
-    if (i === this.state.dataSource[this.state.currQues]?.correct_answer) {
-      this.setState({
-        showCon: true,
-      });
-    } else {
-      return null;
-    }
-  }
-
-  handleNext() {
-    if (this.state.disabled === false) {
-      alert("Select an Option");
-    } else {
-      this.setState({
-        currQues: this.state.currQues + 1,
-        disabled: false,
-      });
-    }
+    return fetch(
+      "https://opentdb.com/api.php?amount=10&category=27&difficulty=easy&type=multiple"
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          isLoading: false,
+          dataSource: responseJson.results,
+        });
+      })
+      .catch((error) => console.log(error));
   }
 
   componentWillUnmount() {
@@ -111,143 +68,175 @@ export default class Animals extends Component {
   }
 
   render() {
+    let questions = [];
+    let correctAnswer = [];
+    let incorrectAnswers = [];
+    var choices = [];
+    let valuesArray = [];
+
     const { minutes, seconds } = this.state;
 
-    if (this.state.seconds === 0 && this.state.minutes === 0) {
-      Alert.alert("Time Over !", "", [
-        {
-          text: "Exit",
-          onPress: () => this.props.navigation.replace("HomeScreen"),
-        },
-      ]);
-    }
+    // TODO: this ⬇ comment is for ending the quiz after 2 minutes It's working just added todo sign to highlight it :)
+
+    // if (this.state.seconds === 1) {
+    //   Alert.alert("Time Over !", "", [
+    //     {
+    //       text: "Exit",
+    //       onPress: () => this.props.navigation.replace("HomeScreen"),
+    //     },
+    //   ]);
+    // }
 
     if (this.setState.isLoading) {
       return;
     } else {
+      this.state.dataSource.map((val, key) => {
+        questions.push(val.question);
+        correctAnswer.push(val.correct_answer);
+        valuesArray.push(val.incorrect_answers);
+      });
+
+      valuesArray.map((value, index) => {
+        incorrectAnswers.push(value);
+        choices.push(index);
+      });
+
       return (
         <ImageBackground
           source={require("../../assets/img/quizbg.png")}
           style={styles.bg}
         >
           <StatusBar hidden />
-          {this.state.showCon === true ? (
-            <ConfettiCannon
-              count={200}
-              origin={{ x: windowWidth / 2, y: 0 }}
-              fadeOut={true}
+          <View style={styles.goBack}>
+            <Icon
+              type="feather"
+              name="arrow-left"
+              size={40}
+              color="white"
+              style={{ marginLeft: windowWidth / 50 }}
+              onPress={() => {
+                Alert.alert("Do you want to exit the quiz ?", "", [
+                  {
+                    text: "Yes",
+                    onPress: () => {
+                      this.props.navigation.replace("HomeScreen");
+                      this.setState({
+                        qNum: 0,
+                        //choice:choices,
+                      });
+                    },
+                  },
+                  {
+                    text: "No",
+                  },
+                ]);
+              }}
             />
-          ) : null}
-          {this.state.dataSource.length === 0 ? null : (
-            <View style={styles.goBack}>
+
+            <View style={styles.timer}>
               <Icon
                 type="feather"
-                name="arrow-left"
-                size={40}
+                name="clock"
+                size={30}
                 color="white"
-                style={{ marginLeft: windowWidth / 50 }}
-                onPress={() => {
-                  Alert.alert("Do you want to exit the quiz ?", "", [
-                    {
-                      text: "Yes",
-                      onPress: () => {
-                        this.props.navigation.replace("HomeScreen");
-                        this.setState({
-                          currQues: 0,
-                          selected: "",
-                        });
-                      },
-                    },
-                    {
-                      text: "No",
-                    },
-                  ]);
-                }}
+                style={{ marginLeft: 5 }}
               />
-
-              <View style={styles.timer}>
-                <Icon
-                  type="feather"
-                  name="clock"
-                  size={30}
-                  color="white"
-                  style={{ marginLeft: 5 }}
-                />
-                <Text style={styles.timer_text}>
-                  {minutes} : {seconds < 10 ? `0${seconds}` : seconds}
-                </Text>
-              </View>
-              <View style={styles.life}>
-                <Image
-                  source={require("../../assets/img/heart.png")}
-                  style={{ width: 30, height: 30, marginRight: 10 }}
-                />
-                <Text style={styles.life_text}>x 3</Text>
-              </View>
+              <Text style={styles.timer_text}>
+                {minutes} : {seconds < 10 ? `0${seconds}` : seconds}
+              </Text>
             </View>
-          )}
+            <View style={styles.life}>
+              <Image
+                source={require("../../assets/img/heart.png")}
+                style={{ width: 30, height: 30, marginRight: 10 }}
+              />
+              <Text style={styles.life_text}>x 3</Text>
+            </View>
+          </View>
+
           <View style={styles.quiz_area}>
-            {this.state.dataSource.length === 0 ? (
-              <View style={styles.act}>
-                <ActivityIndicator color="white" size="large" />
+            {questions.length === 0 ? (
+              <View style={styles.que_card}>
+                <ActivityIndicator color="black" />
               </View>
             ) : (
               <View style={styles.que_card}>
                 <Text style={styles.quiz_que}>
-                  {this.state.currQues +
-                    1 +
-                    ". " +
-                    this.state.dataSource[this.state.currQues].question}
+                  {this.state.qNum + 1 + ". " + questions[this.state.qNum]}
                 </Text>
               </View>
             )}
-
             <View style={styles.scrollViewStyle}>
               <ScrollView>
-                {this.state.options &&
-                  this.state.options.map((i) => (
-                    <TouchableOpacity
-                      style={styles.opt_card}
-                      onPress={() => {
-                        this.checkAnswer(i);
-                      }}
-                      key={i}
-                      disabled={this.state.disabled}
-                    >
-                      <Text style={styles.opt_text}>{i}</Text>
-                    </TouchableOpacity>
-                  ))}
-              </ScrollView>
-            </View>
-            {this.state.currQues !== 9 ? (
-              <View>
-                {this.state.dataSource.length === 0 ? null : (
-                  <View style={styles.q_left}>
-                    <Text style={styles.q_left_text}>
-                      {this.state.currQues + 1} / 10
+                {questions.length === 0 ? (
+                  <View style={styles.opt_card}>
+                    <ActivityIndicator color="black" />
+                  </View>
+                ) : (
+                  <View style={styles.opt_card}>
+                    <Text style={styles.opt_text}>
+                      {correctAnswer[this.state.qNum]}
                     </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        this.handleNext();
-                      }}
-                      style={styles.next_button}
-                    >
-                      <Text style={styles.next_text}>Next</Text>
-                      <Icon
-                        type="feather"
-                        name="arrow-right"
-                        size={25}
-                        color="white"
-                        style={{ fontWeight: "bold", marginLeft: 5 }}
-                      />
-                    </TouchableOpacity>
                   </View>
                 )}
+                {questions.length === 0 ? (
+                  <View style={styles.opt_card}>
+                    <ActivityIndicator color="black" />
+                  </View>
+                ) : (
+                  <View style={styles.opt_card}>
+                    <Text style={styles.opt_text}>
+                      {incorrectAnswers[this.state.qNum][0]}
+                    </Text>
+                  </View>
+                )}
+                {questions.length === 0 ? (
+                  <View style={styles.opt_card}>
+                    <ActivityIndicator color="black" />
+                  </View>
+                ) : (
+                  <View style={styles.opt_card}>
+                    <Text style={styles.opt_text}>
+                      {incorrectAnswers[this.state.qNum][1]}
+                    </Text>
+                  </View>
+                )}
+                {questions.length === 0 ? (
+                  <View style={styles.opt_card}>
+                    <ActivityIndicator color="black" />
+                  </View>
+                ) : (
+                  <View style={styles.opt_card}>
+                    <Text style={styles.opt_text}>
+                      {incorrectAnswers[this.state.qNum][2]}
+                    </Text>
+                  </View>
+                )}
+              </ScrollView>
+            </View>
+            {this.state.qNum !== 9 ? (
+              <View style={styles.q_left}>
+                <Text style={styles.q_left_text}>
+                  {this.state.qNum + 1} / 10
+                </Text>
+                <TouchableOpacity
+                  onPress={() => this.setState({ qNum: this.state.qNum + 1 })}
+                  style={styles.next_button}
+                >
+                  <Text style={styles.next_text}>Next</Text>
+                  <Icon
+                    type="feather"
+                    name="arrow-right"
+                    size={25}
+                    color="white"
+                    style={{ fontWeight: "bold", marginLeft: 5 }}
+                  />
+                </TouchableOpacity>
               </View>
             ) : (
               <View style={styles.q_left}>
                 <Text style={styles.q_left_text}>
-                  {this.state.currQues + 1} / 10
+                  {this.state.qNum + 1} / 10
                 </Text>
                 <TouchableOpacity
                   onPress={() =>
@@ -282,13 +271,6 @@ const styles = StyleSheet.create({
   bg: {
     height: windowHeight,
     width: windowWidth,
-  },
-  act: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: windowHeight / 2,
-    marginLeft: windowWidth / 20,
   },
   goBack: {
     marginTop: windowHeight / 23,
@@ -331,7 +313,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
     width: windowWidth / 1.4,
-    paddingHorizontal: 5,
   },
   next_button: {
     height: windowHeight / 20,
@@ -387,23 +368,5 @@ const styles = StyleSheet.create({
   },
   scrollViewStyle: {
     height: windowHeight / 1.7,
-  },
-  select: {
-    width: windowWidth / 1.4,
-    backgroundColor: "green",
-    height: windowHeight / 10,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 26,
-    marginTop: 50,
-  },
-  wrong: {
-    width: windowWidth / 1.4,
-    backgroundColor: "red",
-    height: windowHeight / 10,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 26,
-    marginTop: 50,
   },
 });
